@@ -25,6 +25,12 @@ public class UserController {
     public ResponseEntity<String> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
         return ResponseEntity.status(409).body(ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(400).body(ex.getMessage());
+    }
+
     @PostMapping("/register")
     public void addUser(@RequestBody Users user ){
         userService.saveUser(user);
