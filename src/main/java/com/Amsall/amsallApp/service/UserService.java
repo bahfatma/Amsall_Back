@@ -18,6 +18,14 @@ public class UserService {
         this.userRepository = usersRepository;
     }
 
+    private void validateEmail(String email) {
+        // Expression régulière pour valider un format d'email standard
+        String emailPattern = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        if (!email.matches(emailPattern)) {
+            throw new IllegalArgumentException("L'adresse e-mail n'est pas valide.");
+        }
+    }
+
     private void validatePassword(String password) {
         // Vérifie la longueur minimale
         if (password.length() < 8) {
@@ -32,6 +40,8 @@ public class UserService {
     }
 
     public void saveUser(Users user) {
+        validateEmail(user.getEmail());
+
         // Vérifie si l'adresse e-mail existe déjà
         Optional<Users> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
