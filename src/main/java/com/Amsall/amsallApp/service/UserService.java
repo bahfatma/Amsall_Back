@@ -19,7 +19,6 @@ public class UserService {
     }
 
     private void validateEmail(String email) {
-        // Expression régulière pour valider un format d'email standard
         String emailPattern = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
         if (!email.matches(emailPattern)) {
             throw new IllegalArgumentException("L'adresse e-mail n'est pas valide.");
@@ -42,17 +41,19 @@ public class UserService {
     public void saveUser(Users user) {
         validateEmail(user.getEmail());
 
-        // Vérifie si l'adresse e-mail existe déjà
         Optional<Users> existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             throw new EmailAlreadyExistsException("L'adresse e-mail saisie existe déjà. Veuillez vous connecter.");
         }
 
-        // Valide le mot de passe avant de sauvegarder
         validatePassword(user.getPassWord());
 
-        // Sauvegarde l'utilisateur
         userRepository.save(user);
     }
+
+    public boolean emailExists(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
 }
 
