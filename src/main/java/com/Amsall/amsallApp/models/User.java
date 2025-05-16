@@ -1,9 +1,13 @@
-package com.Amsall.amsallApp.model;
+package com.Amsall.amsallApp.models;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
-public class Users {
+@Table(name = "users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false,updatable = false)
@@ -22,17 +26,30 @@ public class Users {
     @Column(nullable = false)
     private String passWord;
 
-    @Column(nullable = false)
+    @Column(nullable = false,  unique = true)
     private String phoneNumber;
 
-    public Users(){};
-    public Users(long id, String firstName, String lastName, String email, String passWord, String phoneNumber) {
-        this.id = id;
+    @Column(nullable = true)
+    private String resetToken;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+
+    public User(){};
+
+    public User(String firstName, String lastName, String passWord, String email, String phoneNumber, String resetToken, Set<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
         this.passWord = passWord;
+        this.email = email;
         this.phoneNumber = phoneNumber;
+        this.resetToken = resetToken;
+        this.roles = roles;
     }
 
     public long getId() {
@@ -81,5 +98,21 @@ public class Users {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
     }
 }
